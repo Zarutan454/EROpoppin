@@ -1,4 +1,236 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, TextField, IconButton, Typography, Avatar, Paper } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { useSocket } from '../../hooks/useSocket';
+import { ChatMessage } from '../../types/chat';
+import { formatDistance } from 'date-fns';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import EmojiPicker from 'emoji-picker-react';
+
+interface ChatWindowProps {
+  recipientId: string;
+  recipientName: string;
+  recipientAvatar?: string;
+  currentUserId: string;
+}
+
+export const ChatWindow: React.FC<ChatWindowProps> = ({
+  recipientId,
+  recipientName,
+  recipientAvatar,
+  currentUserId,
+}) => {
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const socket = useSocket({
+    token: localStorage.getItem('token') || '',
+    onMessage: (msg: ChatMessage) => {
+      setMessages(prev => [...prev, msg]);
+      scrollToBottom();
+    },
+    onTyping: (data) => {
+      if (data.from === recipientId) {
+        setIsTyping(true);
+        setTimeout(() => setIsTyping(false), 3000);
+      }
+    },
+  });
+
+  useEffect(() => {
+    loadChatHistory();
+    scrollToBottom();
+  }, [recipientId]);
+
+  const loadChatHistory = async () => {
+    try {
+      const response = await fetch(`/api/chat/history/${recipientId}`);
+      const history = await response.json();
+      setMessages(history);
+      scrollToBottom();
+    } catch (error) {
+      console.error('Failed to load chat history:', error);
+    }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSend = async () => {
+    if (!message.trim()) return;
+
+    const newMessage: ChatMessage = {
+      content: message,
+      from: currentUserId,
+      to: recipientId,
+      timestamp: Date.now(),
+      type: 'text',
+    };
+
+    socket.emit('send_message', newMessage);
+    setMessage('');
+    setMessages(prev => [...prev, newMessage]);
+    scrollToBottom();
+  };
+
+  const handleTyping = () => {
+    socket.emit('typing', { roomId: `${currentUserId}:${recipientId}`, userId: currentUserId });
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/chat/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const { url } = await response.json();
+
+      const newMessage: ChatMessage = {
+        content: url,
+        from: currentUserId,
+        to: recipientId,
+        timestamp: Date.now(),
+        type: file.type.startsWith('image/') ? 'image' : 'file',
+        filename: file.name,
+      };
+
+      socket.emit('send_message', newMessage);
+      setMessages(prev => [...prev, newMessage]);
+      scrollToBottom();
+    } catch (error) {
+      console.error('Failed to upload file:', error);
+    }
+  };
+
+  const handleEmojiClick = (event: any, emojiObject: any) => {
+    setMessage(prev => prev + emojiObject.emoji);
+  };
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '600px' }}>
+      <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar src={recipientAvatar} alt={recipientName} />
+          <Box sx={{ ml: 2 }}>
+            <Typography variant="h6">{recipientName}</Typography>
+            {isTyping && (
+              <Typography variant="caption" color="text.secondary">
+                typing...
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </Box>
+
+      <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
+        {messages.map((msg, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              justifyContent: msg.from === currentUserId ? 'flex-end' : 'flex-start',
+              mb: 2,
+            }}
+          >
+            <Paper
+              sx={{
+                p: 2,
+                backgroundColor: msg.from === currentUserId ? 'primary.main' : 'grey.100',
+                color: msg.from === currentUserId ? 'white' : 'text.primary',
+                maxWidth: '70%',
+              }}
+            >
+              {msg.type === 'text' && <Typography>{msg.content}</Typography>}
+              {msg.type === 'image' && (
+                <Box
+                  component="img"
+                  src={msg.content}
+                  alt="Shared image"
+                  sx={{ maxWidth: '100%', borderRadius: 1 }}
+                />
+              )}
+              {msg.type === 'file' && (
+                <Box
+                  component="a"
+                  href={msg.content}
+                  download={msg.filename}
+                  sx={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  📎 {msg.filename}
+                </Box>
+              )}
+              <Typography variant="caption" sx={{ display: 'block', mt: 1, opacity: 0.7 }}>
+                {formatDistance(msg.timestamp, new Date(), { addSuffix: true })}
+              </Typography>
+            </Paper>
+          </Box>
+        ))}
+        <div ref={messagesEndRef} />
+      </Box>
+
+      <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
+        <Box sx={{ position: 'relative' }}>
+          {showEmojiPicker && (
+            <Box sx={{ position: 'absolute', bottom: '100%', right: 0, zIndex: 1 }}>
+              <EmojiPicker onEmojiClick={handleEmojiClick} />
+            </Box>
+          )}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              onClick={() => fileInputRef.current?.click()}
+              size="small"
+            >
+              <AttachFileIcon />
+            </IconButton>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+            <IconButton
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              size="small"
+            >
+              <EmojiEmotionsIcon />
+            </IconButton>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Type a message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') handleSend();
+                handleTyping();
+              }}
+              sx={{ mx: 1 }}
+            />
+            <IconButton
+              onClick={handleSend}
+              color="primary"
+              disabled={!message.trim()}
+            >
+              <SendIcon />
+            </IconButton>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
 import {
   Box,
   Paper,

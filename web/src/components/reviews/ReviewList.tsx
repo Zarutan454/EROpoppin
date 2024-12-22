@@ -1,4 +1,297 @@
-'use client';
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Rating,
+  Chip,
+  Button,
+  IconButton,
+  Divider,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from '@mui/material';
+import {
+  MoreVert as MoreIcon,
+  PhotoCamera as PhotoIcon,
+  Verified as VerifiedIcon,
+  Report as ReportIcon,
+} from '@mui/icons-material';
+import { formatDistanceToNow } from 'date-fns';
+import { Review, ReviewResponse } from '../../types/review';
+
+interface ReviewListProps {
+  reviews: Review[];
+  onRespondToReview?: (reviewId: string, content: string) => void;
+  onReportReview?: (reviewId: string, reason: string) => void;
+  onDeleteReview?: (reviewId: string) => void;
+  canRespond?: boolean;
+  canModerate?: boolean;
+}
+
+const ReviewCard: React.FC<{
+  review: Review;
+  onRespond?: (content: string) => void;
+  onReport?: (reason: string) => void;
+  onDelete?: () => void;
+  canRespond?: boolean;
+  canModerate?: boolean;
+}> = ({
+  review,
+  onRespond,
+  onReport,
+  onDelete,
+  canRespond,
+  canModerate,
+}) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [responseDialogOpen, setResponseDialogOpen] = useState(false);
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [responseContent, setResponseContent] = useState('');
+  const [reportReason, setReportReason] = useState('');
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleResponseSubmit = () => {
+    if (onRespond) {
+      onRespond(responseContent);
+      setResponseContent('');
+    }
+    setResponseDialogOpen(false);
+  };
+
+  const handleReportSubmit = () => {
+    if (onReport) {
+      onReport(reportReason);
+      setReportReason('');
+    }
+    setReportDialogOpen(false);
+  };
+
+  return (
+    <Card sx={{ mb: 2 }}>
+      <CardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar src={review.user?.avatar} alt={review.user?.name} />
+            <Box sx={{ ml: 1 }}>
+              <Typography variant="subtitle1">
+                {review.user?.name}
+                {review.isVerified && (
+                  <VerifiedIcon
+                    color="primary"
+                    sx={{ ml: 0.5, width: 16, height: 16 }}
+                  />
+                )}
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                {formatDistanceToNow(new Date(review.createdAt), {
+                  addSuffix: true,
+                })}
+              </Typography>
+            </Box>
+          </Box>
+
+          {(canRespond || canModerate) && (
+            <>
+              <IconButton size="small" onClick={handleMenuOpen}>
+                <MoreIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                {canRespond && (
+                  <MenuItem
+                    onClick={() => {
+                      handleMenuClose();
+                      setResponseDialogOpen(true);
+                    }}
+                  >
+                    Respond
+                  </MenuItem>
+                )}
+                {canModerate && (
+                  <MenuItem onClick={onDelete}>Delete Review</MenuItem>
+                )}
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    setReportDialogOpen(true);
+                  }}
+                >
+                  Report
+                </MenuItem>
+              </Menu>
+            </>
+          )}
+        </Box>
+
+        <Box sx={{ mb: 2 }}>
+          <Rating value={review.rating.overall} readOnly precision={0.5} />
+          <Typography variant="body1" sx={{ mt: 1 }}>
+            {review.content}
+          </Typography>
+        </Box>
+
+        {review.photos && review.photos.length > 0 && (
+          <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+            {review.photos.map((photo, index) => (
+              <Box
+                key={index}
+                component="img"
+                src={photo}
+                alt={`Review photo ${index + 1}`}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  objectFit: 'cover',
+                  borderRadius: 1,
+                }}
+              />
+            ))}
+          </Box>
+        )}
+
+        {review.responses && review.responses.length > 0 && (
+          <Box sx={{ mt: 2, pl: 2, borderLeft: 2, borderColor: 'divider' }}>
+            {review.responses.map((response) => (
+              <Box key={response.id} sx={{ mt: 1 }}>
+                <Typography variant="subtitle2" color="primary">
+                  Response from host
+                </Typography>
+                <Typography variant="body2">{response.content}</Typography>
+                <Typography variant="caption" color="textSecondary">
+                  {formatDistanceToNow(new Date(response.createdAt), {
+                    addSuffix: true,
+                  })}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </CardContent>
+
+      {/* Response Dialog */}
+      <Dialog
+        open={responseDialogOpen}
+        onClose={() => setResponseDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Respond to Review</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            multiline
+            rows={4}
+            fullWidth
+            variant="outlined"
+            placeholder="Write your response..."
+            value={responseContent}
+            onChange={(e) => setResponseContent(e.target.value)}
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setResponseDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleResponseSubmit}
+            variant="contained"
+            disabled={!responseContent.trim()}
+          >
+            Submit Response
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Report Dialog */}
+      <Dialog
+        open={reportDialogOpen}
+        onClose={() => setReportDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Report Review</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            multiline
+            rows={4}
+            fullWidth
+            variant="outlined"
+            placeholder="Please provide the reason for reporting this review..."
+            value={reportReason}
+            onChange={(e) => setReportReason(e.target.value)}
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setReportDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleReportSubmit}
+            variant="contained"
+            color="error"
+            disabled={!reportReason.trim()}
+          >
+            Submit Report
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Card>
+  );
+};
+
+const ReviewList: React.FC<ReviewListProps> = ({
+  reviews,
+  onRespondToReview,
+  onReportReview,
+  onDeleteReview,
+  canRespond,
+  canModerate,
+}) => {
+  return (
+    <Box>
+      {reviews.map((review) => (
+        <ReviewCard
+          key={review.id}
+          review={review}
+          onRespond={
+            onRespondToReview
+              ? (content) => onRespondToReview(review.id, content)
+              : undefined
+          }
+          onReport={
+            onReportReview
+              ? (reason) => onReportReview(review.id, reason)
+              : undefined
+          }
+          onDelete={
+            onDeleteReview ? () => onDeleteReview(review.id) : undefined
+          }
+          canRespond={canRespond}
+          canModerate={canModerate}
+        />
+      ))}
+    </Box>
+  );
+};
+
+export default ReviewList;
 
 import { useState } from 'react';
 import Image from 'next/image';
