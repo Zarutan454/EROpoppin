@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Escort Service</title>
+    <meta name="description" content="Exklusiver VIP Escort Service - Diskret und Professional">
+    <meta name="keywords" content="escort, vip, service, begleitung">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-50 font-poppins">
+    <div id="app" v-cloak>
+        <!-- Age Verification Modal -->
+        <div v-if="showAgeVerification" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-playfair mb-4 text-gray-800">Altersverifikation</h2>
+                <p class="mb-6 text-gray-600">Diese Website enthält Inhalte für Erwachsene. Bitte bestätigen Sie, dass Sie mindestens 18 Jahre alt sind.</p>
+                <div class="flex space-x-4">
+                    <button @click="verifyAge(true)" class="bg-rose-600 text-white px-6 py-2 rounded hover:bg-rose-700 transition">
+                        Ich bin über 18
+                    </button>
+                    <button @click="verifyAge(false)" class="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 transition">
+                        Verlassen
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="/" class="font-playfair text-2xl font-bold text-rose-600">
+                            VIP Escort
+                        </a>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="#models" class="text-gray-600 hover:text-rose-600 transition">Models</a>
+                        <a href="#services" class="text-gray-600 hover:text-rose-600 transition">Services</a>
+                        <a href="#locations" class="text-gray-600 hover:text-rose-600 transition">Locations</a>
+                        <a href="#contact" class="text-gray-600 hover:text-rose-600 transition">Kontakt</a>
+                        <button @click="showLoginModal = true" class="bg-rose-600 text-white px-6 py-2 rounded hover:bg-rose-700 transition">
+                            Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="relative h-screen">
+            <div class="absolute inset-0 bg-black opacity-50"></div>
+            <div class="relative h-full flex items-center justify-center text-center px-4">
+                <div class="max-w-4xl">
+                    <h1 class="text-4xl md:text-6xl font-playfair text-white mb-6">
+                        Exklusive Begleitung auf höchstem Niveau
+                    </h1>
+                    <p class="text-xl text-white mb-8">
+                        Diskret • Stilvoll • Professional
+                    </p>
+                    <a href="#models" class="bg-rose-600 text-white px-8 py-3 rounded-lg text-lg hover:bg-rose-700 transition">
+                        Models entdecken
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Featured Models Section -->
+        <section id="models" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-playfair text-center mb-12">
+                    Unsere VIP Models
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="model in featuredModels" :key="model.id" 
+                         class="group relative rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition">
+                        <div class="aspect-w-3 aspect-h-4">
+                            <img :src="model.image" :alt="model.name" 
+                                 class="object-cover w-full h-full transform group-hover:scale-105 transition duration-500">
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                            <h3 class="text-xl text-white font-semibold mb-2">{{ model.name }}</h3>
+                            <p class="text-gray-200">{{ model.location }}</p>
+                            <div class="mt-4 flex justify-between items-center">
+                                <span class="text-white">{{ model.age }} Jahre</span>
+                                <button @click="showModelDetails(model)" 
+                                        class="bg-rose-600 text-white px-4 py-2 rounded hover:bg-rose-700 transition">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-playfair text-center mb-12">
+                    Exklusive Services
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="service in services" :key="service.id" 
+                         class="bg-white rounded-lg p-6 shadow-lg hover:shadow-xl transition">
+                        <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mb-4">
+                            <i :class="service.icon" class="text-rose-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">{{ service.title }}</h3>
+                        <p class="text-gray-600">{{ service.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Locations Section -->
+        <section id="locations" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-playfair text-center mb-12">
+                    Verfügbare Locations
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div v-for="location in locations" :key="location.id"
+                         class="group relative rounded-lg overflow-hidden">
+                        <img :src="location.image" :alt="location.city"
+                             class="w-full h-64 object-cover transform group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                            <span class="text-white text-xl font-semibold">{{ location.city }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-gray-50">
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-3xl md:text-4xl font-playfair text-center mb-12">
+                    Kontaktieren Sie uns
+                </h2>
+                <form @submit.prevent="submitContact" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Name</label>
+                        <input type="text" v-model="contactForm.name" 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" v-model="contactForm.email"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Nachricht</label>
+                        <textarea v-model="contactForm.message" rows="4"
+                                  class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500"></textarea>
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-rose-600 text-white py-3 rounded-lg hover:bg-rose-700 transition">
+                        Nachricht senden
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white py-12">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="font-playfair text-xl mb-4">VIP Escort</h3>
+                        <p class="text-gray-400">
+                            Ihr diskreter Premium Begleitservice
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Quick Links</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#models" class="text-gray-400 hover:text-white transition">Models</a></li>
+                            <li><a href="#services" class="text-gray-400 hover:text-white transition">Services</a></li>
+                            <li><a href="#locations" class="text-gray-400 hover:text-white transition">Locations</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Legal</h4>
+                        <ul class="space-y-2">
+                            <li><a href="/privacy" class="text-gray-400 hover:text-white transition">Datenschutz</a></li>
+                            <li><a href="/terms" class="text-gray-400 hover:text-white transition">AGB</a></li>
+                            <li><a href="/imprint" class="text-gray-400 hover:text-white transition">Impressum</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Kontakt</h4>
+                        <p class="text-gray-400">
+                            Tel: +49 (0) XXX XXX XXX<br>
+                            Email: contact@vipescort.com
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+                    <p>&copy; 2024 VIP Escort. Alle Rechte vorbehalten.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Login Modal -->
+        <div v-if="showLoginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-playfair mb-6">Login</h2>
+                <form @submit.prevent="login" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" v-model="loginForm.email" 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Passwort</label>
+                        <input type="password" v-model="loginForm.password"
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-rose-500">
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-rose-600 text-white py-2 rounded-lg hover:bg-rose-700 transition">
+                        Einloggen
+                    </button>
+                </form>
+                <button @click="showLoginModal = false" 
+                        class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

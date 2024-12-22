@@ -1,0 +1,48 @@
+{
+  "form": {
+    "ratings": "Bewertungen",
+    "content": "Beschreibe deine Erfahrung",
+    "isPublic": "Öffentlich sichtbar",
+    "isAnonymous": "Anonym veröffentlichen",
+    "submit": "Bewertung absenden",
+    "errors": {
+      "required": "Dieses Feld ist erforderlich",
+      "minLength": "Mindestens {{min}} Zeichen erforderlich",
+      "maxLength": "Maximal {{max}} Zeichen erlaubt"
+    }
+  },
+  "categories": {
+    "overall": "Gesamtbewertung",
+    "communication": "Kommunikation",
+    "appearance": "Erscheinungsbild",
+    "service": "Service",
+    "location": "Location",
+    "value": "Preis-Leistung"
+  },
+  "list": {
+    "noReviews": "Noch keine Bewertungen vorhanden",
+    "loadMore": "Weitere Bewertungen laden"
+  },
+  "stats": {
+    "basedOn": "Basierend auf {{count}} Bewertungen",
+    "verifiedCount": "{{count}} von {{total}} verifiziert",
+    "recommendationRate": "{{rate}}% würden weiterempfehlen",
+    "detailedRatings": "Detaillierte Bewertungen",
+    "ratingDistribution": "Bewertungsverteilung"
+  },
+  "verified": "Verifiziert",
+  "anonymous": "Anonym",
+  "response": {
+    "title": "Auf Bewertung antworten",
+    "content": "Deine Antwort",
+    "errors": {
+      "required": "Eine Antwort ist erforderlich"
+    }
+  },
+  "actions": {
+    "respond": "Antworten",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "share": "Teilen"
+  }
+}

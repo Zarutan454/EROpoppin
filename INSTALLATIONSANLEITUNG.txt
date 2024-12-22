@@ -1,0 +1,186 @@
+SCHRITT-FÜR-SCHRITT INSTALLATIONSANLEITUNG
+=========================================
+
+Diese Anleitung führt Sie durch den gesamten Prozess der Installation und Einrichtung der Escort-Website.
+
+VORAUSSETZUNGEN
+--------------
+
+1. Grundlegende Software:
+   - Ein Computer mit Windows 10/11 oder MacOS oder Linux
+   - Internet-Verbindung
+   - Web-Browser (Chrome, Firefox, oder Edge)
+
+2. Benötigte Programme (kostenlos):
+   - Visual Studio Code (Code-Editor): https://code.visualstudio.com/download
+   - Node.js (JavaScript-Laufzeitumgebung): https://nodejs.org/ (LTS-Version wählen)
+   - MongoDB (Datenbank): https://www.mongodb.com/try/download/community
+   - Git (Versionskontrolle): https://git-scm.com/downloads
+
+INSTALLATION DER GRUNDSOFTWARE
+-----------------------------
+
+SCHRITT 1: Node.js Installation
+1. Gehen Sie zu https://nodejs.org/
+2. Laden Sie die LTS (Long Term Support) Version herunter
+3. Führen Sie die heruntergeladene Datei aus
+4. Klicken Sie durch den Installer (alle Standardoptionen belassen)
+5. Öffnen Sie die Kommandozeile/Terminal
+6. Tippen Sie "node --version" ein, um die Installation zu überprüfen
+7. Tippen Sie "npm --version" ein, um npm zu überprüfen
+
+SCHRITT 2: MongoDB Installation
+1. Gehen Sie zu https://www.mongodb.com/try/download/community
+2. Laden Sie die Community Server Version herunter
+3. Führen Sie den Installer aus
+4. Wählen Sie "Complete" Installation
+5. Aktivieren Sie "Install MongoDB Compass" (grafische Oberfläche)
+6. Beenden Sie die Installation
+7. MongoDB Compass wird automatisch installiert
+
+SCHRITT 3: Visual Studio Code Installation
+1. Gehen Sie zu https://code.visualstudio.com/
+2. Laden Sie die Version für Ihr Betriebssystem herunter
+3. Führen Sie die Installation aus
+4. Öffnen Sie VS Code
+5. Installieren Sie folgende Erweiterungen (links in der Sidebar auf das Erweiterungen-Symbol klicken):
+   - "Vue Language Features"
+   - "ESLint"
+   - "Prettier"
+   - "MongoDB for VS Code"
+
+PROJEKT-INSTALLATION
+-------------------
+
+SCHRITT 1: Projekt herunterladen
+1. Erstellen Sie einen neuen Ordner auf Ihrem Computer (z.B. "escort-website")
+2. Öffnen Sie die Kommandozeile/Terminal
+3. Navigieren Sie zu dem erstellten Ordner:
+   cd Pfad/zu/Ihrem/escort-website-Ordner
+4. Laden Sie das Projekt herunter:
+   git clone [REPOSITORY-URL]
+   (Die Repository-URL wird Ihnen separat mitgeteilt)
+
+SCHRITT 2: Abhängigkeiten installieren
+1. Navigieren Sie in den Projektordner:
+   cd escort-website
+2. Installieren Sie alle benötigten Pakete:
+   npm install
+
+SCHRITT 3: Datenbank einrichten
+1. Öffnen Sie MongoDB Compass
+2. Klicken Sie auf "New Connection"
+3. Lassen Sie die Standard-URL (mongodb://localhost:27017)
+4. Klicken Sie auf "Connect"
+5. Klicken Sie auf "Create Database"
+6. Geben Sie als Datenbanknamen "escort-db" ein
+7. Erstellen Sie eine erste Collection namens "users"
+
+SCHRITT 4: Umgebungsvariablen einrichten
+1. Erstellen Sie eine neue Datei namens ".env" im Projektordner
+2. Fügen Sie folgende Zeilen ein (ersetzen Sie die Werte in Klammern):
+   DATABASE_URL=mongodb://localhost:27017/escort-db
+   JWT_SECRET=[ein-langer-zufälliger-string]
+   SMTP_HOST=[ihr-email-server]
+   SMTP_USER=[ihre-email]
+   SMTP_PASS=[ihr-email-passwort]
+   STRIPE_SECRET=[ihr-stripe-key]
+   STRIPE_PUBLIC=[ihr-stripe-public-key]
+
+PROJEKT STARTEN
+--------------
+
+SCHRITT 1: Backend starten
+1. Öffnen Sie ein Terminal-Fenster
+2. Navigieren Sie zum Projektordner
+3. Geben Sie ein: npm run server
+
+SCHRITT 2: Frontend starten
+1. Öffnen Sie ein zweites Terminal-Fenster
+2. Navigieren Sie zum Projektordner
+3. Geben Sie ein: npm run client
+
+SCHRITT 3: Überprüfen
+1. Öffnen Sie Ihren Browser
+2. Gehen Sie zu: http://localhost:3000
+3. Sie sollten die Website sehen
+
+HOSTING & DOMAIN
+---------------
+
+SCHRITT 1: Domain registrieren
+1. Gehen Sie zu einem Domain-Registrar (z.B. GoDaddy, Namecheap)
+2. Registrieren Sie Ihre gewünschte Domain
+3. Notieren Sie sich die DNS-Einstellungen
+
+SCHRITT 2: Hosting einrichten
+Option A: Einfach (empfohlen für Anfänger)
+1. Erstellen Sie ein Konto bei Vercel (https://vercel.com)
+2. Verbinden Sie Ihr GitHub-Repository
+3. Folgen Sie dem Vercel Deploy-Assistenten
+
+Option B: Fortgeschritten (mehr Kontrolle)
+1. Mieten Sie einen VPS (z.B. bei Hetzner, DigitalOcean)
+2. Folgen Sie der separaten Server-Einrichtungsanleitung
+
+WARTUNG & UPDATES
+----------------
+
+1. Regelmäßige Updates:
+   - Öffnen Sie das Terminal im Projektordner
+   - Führen Sie aus: npm update
+
+2. Datenbank-Backup:
+   - Öffnen Sie MongoDB Compass
+   - Rechtsklick auf die Datenbank
+   - Wählen Sie "Backup Database"
+
+3. Monitoring:
+   - Registrieren Sie sich bei UptimeRobot (kostenlos)
+   - Fügen Sie Ihre Website-URL hinzu
+   - Richten Sie E-Mail-Benachrichtigungen ein
+
+FEHLERBEHEBUNG
+-------------
+
+Problem: Website lädt nicht
+1. Überprüfen Sie, ob beide Terminal-Fenster laufen
+2. Überprüfen Sie die URLs (http://localhost:3000)
+3. Löschen Sie den Browser-Cache
+
+Problem: Datenbank-Verbindungsfehler
+1. Überprüfen Sie, ob MongoDB läuft
+2. Überprüfen Sie die Datenbank-URL in .env
+3. Neustarten der Anwendung
+
+Problem: Bilder werden nicht angezeigt
+1. Überprüfen Sie den Upload-Ordner
+2. Überprüfen Sie die Berechtigungen
+3. Leeren Sie den Browser-Cache
+
+SUPPORT & HILFE
+--------------
+
+Bei Problemen:
+1. Überprüfen Sie die FAQ-Sektion im Git Repository
+2. Öffnen Sie ein Issue auf GitHub
+3. Kontaktieren Sie den Support unter [Support-Email]
+
+SICHERHEITSHINWEISE
+------------------
+
+1. Ändern Sie regelmäßig alle Passwörter
+2. Machen Sie regelmäßige Backups
+3. Halten Sie alle Systeme aktuell
+4. Überwachen Sie die Server-Logs
+5. Aktivieren Sie die Zwei-Faktor-Authentifizierung
+
+RECHTLICHE HINWEISE
+-----------------
+
+1. Stellen Sie sicher, dass Sie alle rechtlichen Anforderungen erfüllen
+2. Aktualisieren Sie die Datenschutzerklärung
+3. Halten Sie sich an die DSGVO-Richtlinien
+4. Implementieren Sie die erforderlichen Altersprüfungen
+
+Diese Anleitung wird regelmäßig aktualisiert. Überprüfen Sie regelmäßig auf Updates.

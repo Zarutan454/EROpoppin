@@ -1,0 +1,48 @@
+{
+  "form": {
+    "ratings": "Ratings",
+    "content": "Describe your experience",
+    "isPublic": "Publicly visible",
+    "isAnonymous": "Post anonymously",
+    "submit": "Submit review",
+    "errors": {
+      "required": "This field is required",
+      "minLength": "Minimum {{min}} characters required",
+      "maxLength": "Maximum {{max}} characters allowed"
+    }
+  },
+  "categories": {
+    "overall": "Overall",
+    "communication": "Communication",
+    "appearance": "Appearance",
+    "service": "Service",
+    "location": "Location",
+    "value": "Value for money"
+  },
+  "list": {
+    "noReviews": "No reviews yet",
+    "loadMore": "Load more reviews"
+  },
+  "stats": {
+    "basedOn": "Based on {{count}} reviews",
+    "verifiedCount": "{{count}} out of {{total}} verified",
+    "recommendationRate": "{{rate}}% would recommend",
+    "detailedRatings": "Detailed ratings",
+    "ratingDistribution": "Rating distribution"
+  },
+  "verified": "Verified",
+  "anonymous": "Anonymous",
+  "response": {
+    "title": "Respond to review",
+    "content": "Your response",
+    "errors": {
+      "required": "A response is required"
+    }
+  },
+  "actions": {
+    "respond": "Respond",
+    "edit": "Edit",
+    "delete": "Delete",
+    "share": "Share"
+  }
+}
