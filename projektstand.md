@@ -1,6 +1,6 @@
 # Projektstand EROpoppin
 
-## Aktueller Stand: 23.01.2024
+## Aktueller Stand: 27.01.2024
 
 ### 1. Buchungssystem (✅ Abgeschlossen)
 
@@ -10,6 +10,16 @@
 - ✅ Buchungsvalidierung und -verarbeitung
 - ✅ Preisberechnung und Verfügbarkeitsprüfung
 - ✅ Zahlungsintegration (Grundstruktur)
+- ✅ Neue Backend Services:
+  - BookingService mit umfassender Validierung
+  - Notification Integration
+  - Email-Benachrichtigungen
+  - Deposit-System
+- ✅ Sicherheitsfunktionen:
+  - JWT Authentication
+  - Berechtigungsprüfungen
+  - Datenverschlüsselung
+  - Rate Limiting
 
 #### 1.2 Frontend-Komponenten
 - ✅ DateTimeSelector
