@@ -1,0 +1,33 @@
+{
+  "welcome": "Willkommen bei EROpoppin",
+  "navigation": {
+    "home": "Startseite",
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen",
+    "favorites": "Favoriten",
+    "profile": "Profil",
+    "messages": "Nachrichten"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?"
+  },
+  "dashboard": {
+    "welcome": "Willkommen zurück",
+    "stats": "Statistiken",
+    "bookings": "Buchungen",
+    "reviews": "Bewertungen",
+    "earnings": "Einnahmen"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "profile": "Profil-Einstellungen",
+    "notifications": "Benachrichtigungen",
+    "privacy": "Privatsphäre",
+    "language": "Sprache"
+  }
+}

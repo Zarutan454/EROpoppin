@@ -1,0 +1,165 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  escortProfile EscortProfile?
+  reviews       Review[]
+  messages      Message[]
+  bookings      Booking[]
+}
+
+enum UserRole {
+  USER
+  ESCORT
+  ADMIN
+}
+
+model EscortProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  name        String
+  description String   @db.Text
+  age         Int
+  gender      String
+  city        String
+  country     String
+  languages   String[]
+  height      Int?
+  weight      Int?
+  hairColor   String?
+  eyeColor    String?
+  bust        String?
+  waist       String?
+  hips        String?
+  hourlyRate  Int
+  status      ProfileStatus @default(PENDING)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images      Image[]
+  reviews     Review[]
+  bookings    Booking[]
+  availability Availability[]
+}
+
+enum ProfileStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  profileId String
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  profile   EscortProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String   @db.Text
+  userId    String
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile   EscortProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id          String   @id @default(cuid())
+  userId      String
+  profileId   String
+  date        DateTime
+  duration    Int
+  status      BookingStatus @default(PENDING)
+  location    String?
+  notes       String?   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile     EscortProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  senderId  String
+  receiverId String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Availability {
+  id        String   @id @default(cuid())
+  profileId String
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  
+  profile   EscortProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, dayOfWeek])
+}
