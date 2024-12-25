@@ -1,43 +1,38 @@
-export interface ProfileImage {
-  id: string;
-  url: string;
-  thumbnail: string;
-  isMain: boolean;
-  isVerified: boolean;
-  createdAt: string;
-}
-
-export interface Service {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  duration: number;
-  isAvailable: boolean;
-}
-
-export interface Availability {
-  id: string;
-  dayOfWeek: number;
-  startTime: string;
-  endTime: string;
-  isAvailable: boolean;
+export interface PhysicalAttributes {
+  height?: number;
+  weight?: number;
+  measurements?: string;
+  eyeColor?: string;
+  hairColor?: string;
+  build?: string;
 }
 
 export interface Location {
-  id: string;
   city: string;
   country: string;
-  travelDistance?: number;
-  inCall: boolean;
-  outCall: boolean;
+  address?: string;
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
-export interface Rate {
-  id: string;
-  duration: number;
-  price: number;
-  description?: string;
+export interface Languages {
+  language: string;
+  level: 'basic' | 'intermediate' | 'fluent' | 'native';
+}
+
+export interface Rates {
+  hourly: number;
+  twoHours?: number;
+  overnight?: number;
+  weekend?: number;
+}
+
+export interface WorkingHours {
+  start: string; // "HH:mm" format
+  end: string;
+  daysOff: number[]; // 0 = Sunday, 6 = Saturday
 }
 
 export interface Review {
@@ -50,18 +45,30 @@ export interface Review {
   isVerified: boolean;
 }
 
-export interface PhysicalAttributes {
-  height?: number;
-  weight?: number;
-  measurements?: string;
-  eyeColor?: string;
-  hairColor?: string;
-  build?: string;
+export interface ProfileImage {
+  id: string;
+  url: string;
+  isVerified: boolean;
+  isPrimary: boolean;
 }
 
-export interface Languages {
-  language: string;
-  level: 'basic' | 'intermediate' | 'fluent' | 'native';
+export interface Service {
+  id: string;
+  name: string;
+  description?: string;
+  price?: number;
+}
+
+export interface Availability {
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface Rate {
+  duration: string;
+  price: number;
+  description?: string;
 }
 
 export interface EscortProfile {
@@ -94,6 +101,7 @@ export interface EscortProfile {
   lastActive: string;
   createdAt: string;
   updatedAt: string;
+  profileImage?: string;
 }
 
 export interface ProfileUpdateDto {
