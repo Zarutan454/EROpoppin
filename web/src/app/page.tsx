@@ -6,10 +6,19 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-black">
-        <div className="absolute inset-0 bg-gradient-to-b from-pink-500/20 to-black/20" />
-        <div className="relative container mx-auto px-4 py-24 sm:py-32">
-          <div className="text-center">
+      <section className="relative bg-black h-screen">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-50"
+        >
+          <source src="/locales/de/videos/hero-background.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black" />
+        <div className="relative container mx-auto px-4 py-24 sm:py-32 h-full flex items-center">
+          <div className="text-center w-full">
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
               Find Your Perfect Connection
             </h1>
@@ -30,6 +39,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
       {/* Search Section */}
       <section className="bg-gray-900 py-12">
